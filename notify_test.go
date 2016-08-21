@@ -17,16 +17,9 @@ func TestNotify(t *testing.T) {
 		panic("Cannot create new notification")
 	}
 
-	//hello.SetTimeout(0)
-	//notify.NotificationSetTimeout(hello, DELAY)
-
+	hello.SetUrgency(NOTIFY_URGENCY_LOW)
+	hello.SetTimeout(NOTIFY_EXPIRES_DEFAULT)
 	hello.Show()
-	//if e := notify.NotificationShow(hello); e != nil {
-	//		fmt.Fprintf(os.Stderr, "%s\n", e.Message())
-	//		return
-	//	}
-
-	//time.Sleep(time.Second * 3)
 	//hello.Close()
 	//	notify.NotificationClose(hello)
 

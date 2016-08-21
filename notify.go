@@ -24,6 +24,11 @@ const (
 	NOTIFY_URGENCY_CRITICAL = 2
 )
 
+const (
+	NOTIFY_EXPIRES_NEVER   = 0
+	NOTIFY_EXPIRES_DEFAULT = -1
+)
+
 type Urgency int
 type ActionCallback func(*Notification, string, interface{})
 
@@ -55,7 +60,7 @@ func (n *Notification) Update(summary, body, icon string) bool {
 	return notificationUpdate(n, summary, body, icon)
 }
 
-func (n *Notification) Show() *Error {
+func (n *Notification) Show() error {
 	return notificationShow(n)
 }
 
@@ -107,7 +112,7 @@ func (n *Notification) ClearActions() {
 	notificationClearActions(n)
 }
 
-func (n *Notification) Close() *Error {
+func (n *Notification) Close() error {
 	return notificationClose(n)
 }
 
@@ -128,7 +133,7 @@ func notificationUpdate(notif *Notification, summary, body, icon string) bool {
 	return C.notify_notification_update(notif._notification, psummary, pbody, picon) != 0
 }
 
-func notificationShow(notif *Notification) *Error {
+func notificationShow(notif *Notification) error {
 	var err *C.GError
 	C.notify_notification_show(notif._notification, &err)
 
@@ -217,7 +222,7 @@ func notificationClearActions(notif *Notification) {
 	C.notify_notification_clear_actions(notif._notification)
 }
 
-func notificationClose(notif *Notification) *Error {
+func notificationClose(notif *Notification) error {
 	var err *C.GError
 
 	C.notify_notification_close(notif._notification, &err)

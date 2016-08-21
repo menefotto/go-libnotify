@@ -2,8 +2,6 @@
 #define GO_GLIB_H
 
 
-
-#include <glib.h>
 #include <glib-object.h>
 #include <stdint.h>
 #include <stdlib.h>

@@ -25,7 +25,6 @@ func (v *Error) message() string {
 	return C.GoString(C.to_charptr(v.GError.message))
 }
 
-func ErrorFromNative(err unsafe.Pointer) *Error {
-	return &Error{
-		C.to_error(err)}
+func ErrorFromNative(err unsafe.Pointer) error {
+	return &Error{GError: C.to_error(err)}
 }

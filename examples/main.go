@@ -5,11 +5,7 @@
 
 package main
 
-import notify "github.com/lenormf/go-notify"
-
-const (
-	DELAY = 3000
-)
+import notify "github.com/go-libnotify"
 
 func main() {
 	notify.Init("AppName")
@@ -23,17 +19,9 @@ func main() {
 		panic("Cannot create new notification")
 	}
 
-	//hello.SetTimeout(0)
-	//notify.NotificationSetTimeout(hello, DELAY)
+	hello.SetTimeout(notify.NOTIFY_EXPIRES_DEFAULT)
 
 	hello.Show()
-	//if e := notify.NotificationShow(hello); e != nil {
-	//		fmt.Fprintf(os.Stderr, "%s\n", e.Message())
-	//		return
-	//	}
-
-	//time.Sleep(time.Second * 3)
 	//hello.Close()
-	//	notify.NotificationClose(hello)
 
 }
