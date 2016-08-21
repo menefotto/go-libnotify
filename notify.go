@@ -38,7 +38,7 @@ func ErrorFromNative(err unsafe.Pointer) *Error {
 /*
  * Exported Types
  */
-type NotifyNotification struct {
+type Notification struct {
 	_notification *C.NotifyNotification
 }
 
@@ -48,14 +48,14 @@ const (
 	NOTIFY_URGENCY_CRITICAL = 2
 )
 
-type NotifyUrgency int
-type NotifyActionCallback func(*NotifyNotification, string, interface{})
+type Urgency int
+type ActionCallback func(*Notification, string, interface{})
 
 /*
  * Private Functions
  */
-func new_notify_notification(cnotif *C.NotifyNotification) *NotifyNotification {
-	return &NotifyNotification{cnotif}
+func new_notification(cnotif *C.NotifyNotification) *Notification {
+	return &Notification{cnotif}
 }
 
 /*
@@ -108,7 +108,7 @@ func GetServerInfo(name, vendor, version, spec_version *string) bool {
 	return ret
 }
 
-func NotificationNew(title, text, image string) *NotifyNotification {
+func NotificationNew(title, text, image string) *Notification {
 	ptitle := C.CString(title)
 	ptext := C.CString(text)
 	pimage := C.CString(image)
@@ -123,10 +123,10 @@ func NotificationNew(title, text, image string) *NotifyNotification {
 		}
 	}()
 
-	return new_notify_notification(C.notify_notification_new(ptitle, (*C.char)(ntext), pimage))
+	return new_notification(C.notify_notification_new(ptitle, (*C.char)(ntext), pimage))
 }
 
-func NotificationUpdate(notif *NotifyNotification, summary, body, icon string) bool {
+func NotificationUpdate(notif *Notification, summary, body, icon string) bool {
 	psummary := C.CString(summary)
 	pbody := C.CString(body)
 	picon := C.CString(icon)
@@ -139,43 +139,43 @@ func NotificationUpdate(notif *NotifyNotification, summary, body, icon string) b
 	return C.notify_notification_update(notif._notification, psummary, pbody, picon) != 0
 }
 
-func NotificationShow(notif *NotifyNotification) *Error {
+func NotificationShow(notif *Notification) *Error {
 	var err *C.GError
 	C.notify_notification_show(notif._notification, &err)
 
 	return ErrorFromNative(unsafe.Pointer(err))
 }
 
-func NotificationSetTimeout(notif *NotifyNotification, timeout int32) {
+func NotificationSetTimeout(notif *Notification, timeout int32) {
 	C.notify_notification_set_timeout(notif._notification, C.gint(timeout))
 }
 
-func NotificationSetCategory(notif *NotifyNotification, category string) {
+func NotificationSetCategory(notif *Notification, category string) {
 	pcategory := C.CString(category)
 	defer C.free(unsafe.Pointer(pcategory))
 
 	C.notify_notification_set_category(notif._notification, pcategory)
 }
 
-func NotificationSetUrgency(notif *NotifyNotification, urgency NotifyUrgency) {
+func NotificationSetUrgency(notif *Notification, urgency Urgency) {
 	C.notify_notification_set_urgency(notif._notification, C.NotifyUrgency(urgency))
 }
 
-func NotificationSetHintInt32(notif *NotifyNotification, key string, value int32) {
+func NotificationSetHintInt32(notif *Notification, key string, value int32) {
 	pkey := C.CString(key)
 	defer C.free(unsafe.Pointer(pkey))
 
 	C.notify_notification_set_hint_int32(notif._notification, pkey, C.gint(value))
 }
 
-func NotificationSetHintDouble(notif *NotifyNotification, key string, value float64) {
+func NotificationSetHintDouble(notif *Notification, key string, value float64) {
 	pkey := C.CString(key)
 	defer C.free(unsafe.Pointer(pkey))
 
 	C.notify_notification_set_hint_double(notif._notification, pkey, C.gdouble(value))
 }
 
-func NotificationSetHintString(notif *NotifyNotification, key string, value string) {
+func NotificationSetHintString(notif *Notification, key string, value string) {
 	pkey := C.CString(key)
 	pvalue := C.CString(value)
 	defer func() {
@@ -186,7 +186,7 @@ func NotificationSetHintString(notif *NotifyNotification, key string, value stri
 	C.notify_notification_set_hint_string(notif._notification, pkey, pvalue)
 }
 
-func NotificationSetHintByte(notif *NotifyNotification, key string, value byte) {
+func NotificationSetHintByte(notif *Notification, key string, value byte) {
 	pkey := C.CString(key)
 	defer C.free(unsafe.Pointer(pkey))
 
@@ -194,14 +194,14 @@ func NotificationSetHintByte(notif *NotifyNotification, key string, value byte) 
 }
 
 // FIXME: implement
-func NotificationSetHintByteArray(notif *NotifyNotification, key string, value []byte, len uint32) {
+func NotificationSetHintByteArray(notif *Notification, key string, value []byte, len uint32) {
 	pkey := C.CString(key)
 	defer C.free(unsafe.Pointer(pkey))
 
 	// C.notify_notification_set_hint_byte_array(notif._notification, pkey, (*C.guchar)(value), C.gsize(len))
 }
 
-func NotificationSetHint(notif *NotifyNotification, key string, value interface{}) {
+func NotificationSetHint(notif *Notification, key string, value interface{}) {
 	switch value.(type) {
 	case int32:
 		NotificationSetHintInt32(notif, key, value.(int32))
@@ -214,21 +214,21 @@ func NotificationSetHint(notif *NotifyNotification, key string, value interface{
 	}
 }
 
-func NotificationClearHints(notif *NotifyNotification) {
+func NotificationClearHints(notif *Notification) {
 	C.notify_notification_clear_hints(notif._notification)
 }
 
 // FIXME: the C function is supposed to be allowing the user to pass another function than free
-func NotificationAddAction(notif *NotifyNotification, action, label string,
-	callback NotifyActionCallback, user_data interface{}) {
+func NotificationAddAction(notif *Notification, action, label string,
+	callback ActionCallback, user_data interface{}) {
 	// C.notify_notification_add_action(notif._notification, paction, plabel, (C.NotifyActionCallback)(callback), user_data, C.free)
 }
 
-func NotificationClearActions(notif *NotifyNotification) {
+func NotificationClearActions(notif *Notification) {
 	C.notify_notification_clear_actions(notif._notification)
 }
 
-func NotificationClose(notif *NotifyNotification) *Error {
+func NotificationClose(notif *Notification) *Error {
 	var err *C.GError
 
 	C.notify_notification_close(notif._notification, &err)
@@ -237,62 +237,62 @@ func NotificationClose(notif *NotifyNotification) *Error {
 }
 
 // Member Functions
-func (this *NotifyNotification) Update(summary, body, icon string) bool {
+func (this *Notification) Update(summary, body, icon string) bool {
 	return NotificationUpdate(this, summary, body, icon)
 }
 
-func (this *NotifyNotification) Show() *Error {
+func (this *Notification) Show() *Error {
 	return NotificationShow(this)
 }
 
-func (this *NotifyNotification) SetTimeout(timeout int32) {
+func (this *Notification) SetTimeout(timeout int32) {
 	NotificationSetTimeout(this, timeout)
 }
 
-func (this *NotifyNotification) SetCategory(category string) {
+func (this *Notification) SetCategory(category string) {
 	NotificationSetCategory(this, category)
 }
 
-func (this *NotifyNotification) SetUrgency(urgency NotifyUrgency) {
+func (this *Notification) SetUrgency(urgency Urgency) {
 	NotificationSetUrgency(this, urgency)
 }
 
-func (this *NotifyNotification) SetHintInt32(key string, value int32) {
+func (this *Notification) SetHintInt32(key string, value int32) {
 	NotificationSetHintInt32(this, key, value)
 }
 
-func (this *NotifyNotification) SetHintDouble(key string, value float64) {
+func (this *Notification) SetHintDouble(key string, value float64) {
 	NotificationSetHintDouble(this, key, value)
 }
 
-func (this *NotifyNotification) SetHintString(key string, value string) {
+func (this *Notification) SetHintString(key string, value string) {
 	NotificationSetHintString(this, key, value)
 }
 
-func (this *NotifyNotification) SetHintByte(key string, value byte) {
+func (this *Notification) SetHintByte(key string, value byte) {
 	NotificationSetHintByte(this, key, value)
 }
 
-func (this *NotifyNotification) SetHintByteArray(key string, value []byte, len uint32) {
+func (this *Notification) SetHintByteArray(key string, value []byte, len uint32) {
 	NotificationSetHintByteArray(this, key, value, len)
 }
 
-func (this *NotifyNotification) SetHint(key string, value interface{}) {
+func (this *Notification) SetHint(key string, value interface{}) {
 	NotificationSetHint(this, key, value)
 }
 
-func (this *NotifyNotification) ClearHints() {
+func (this *Notification) ClearHints() {
 	NotificationClearHints(this)
 }
 
-func (this *NotifyNotification) AddAction(action, label string, callback NotifyActionCallback, user_data interface{}) {
+func (this *Notification) AddAction(action, label string, callback ActionCallback, user_data interface{}) {
 	NotificationAddAction(this, action, label, callback, user_data)
 }
 
-func (this *NotifyNotification) ClearActions() {
+func (this *Notification) ClearActions() {
 	NotificationClearActions(this)
 }
 
-func (this *NotifyNotification) Close() *Error {
+func (this *Notification) Close() *Error {
 	return NotificationClose(this)
 }
