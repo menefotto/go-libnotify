@@ -1,11 +1,11 @@
 This is a fork of https://github.com/lenormf/go-notify go-notify with some minor
-corrections and no other dependecies from go-glib it's a standalone lib, except
-for the libnofity lib and glib.
+corrections, no go-glib dependecies, only one api wich sort of object oriented,
+it's a standalone lib, except for the libnofity lib and glib C libraries.
 
 Install : 
 
  # install libnotify devel librairies,
- whatever it is your distro of choice
+ use whatever package manager your distro implements
  
  # installing go-notify
  go get github.com/mqu/go-notify
@@ -13,8 +13,8 @@ Install :
 C Dependencies: libnotify
 
 
-This package provides GO bindings for the C library libnotify.
-Although this package provides full retro-compatibility with the regular C
-library, it also provides OOP-like functions for the NotifyNotification object.
+This package provides GO bindings for the C library libnotify. This package 
+provides sort of an object oriented api functions for the NotifyNotification 
+object. Called in short Notification.
 
 See example for usage.
