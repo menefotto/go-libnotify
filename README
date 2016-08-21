@@ -19,4 +19,14 @@ provides sort of an object oriented api functions for the NotifyNotification
 object. Called in short Notification. Original documentation applies here as 
 well, currently faily poorly documentes, going to add it soon.
 
+
+Caveats and limitations:
+-GetServerCap() It's currently not implemented and can't be called support isn't 
+		going to be added ever.
+-AddActions()   It's not implemented and does nothing has an empty body might be
+		added in a near future.
+-Documentation  It does not exsist but at the same time, there is no difference
+		between the orginal libnotify, meaning the gtk documentation
+		applies here. Soon to be added.
+
 See example for usage.

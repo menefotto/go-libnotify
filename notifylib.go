@@ -29,15 +29,6 @@ func GetAppName() string {
 	return C.GoString(C.notify_get_app_name())
 }
 
-/*
-func GetServerCaps() *glib.List {
-	var gcaps *C.GList
-
-	gcaps = C.notify_get_server_caps()
-
-	return glib.ListFromNative(unsafe.Pointer(gcaps))
-}
-*/
 func GetServerInfo(name, vendor, version, spec_version *string) bool {
 	var cname *C.char
 	var cvendor *C.char
