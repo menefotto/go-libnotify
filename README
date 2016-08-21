@@ -17,7 +17,7 @@ C Dependencies: libnotify
 This package provides GO bindings for the C library libnotify. This package 
 provides sort of an object oriented api functions for the NotifyNotification 
 object. Called in short Notification. Original documentation applies here as 
-well, currently faily poorly documentes, going to add it soon.
+well, currently faily poorly documented, going to add it soon.
 
 
 Caveats and limitations:
